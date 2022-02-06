@@ -1,5 +1,5 @@
 staging:
-    stage: staging
+    stage: deploy
     script:
         - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-stg.git
         - git push -f heroku master
@@ -7,7 +7,7 @@ staging:
         - developoment
 
 production:
-    stage: production
+    stage: deploy
     script:
         - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-stg.git
         - git push -f heroku master
