@@ -7,7 +7,7 @@ cache:
 stages:
   - lint
   - deploy_staging
-  - z
+  - deploy_production
 
 # Job 1:
 Lint:
