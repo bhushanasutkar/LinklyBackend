@@ -6,7 +6,8 @@ cache:
 
 stages:
   - lint
-  - deploy
+  - deploy_staging
+  - z
 
 # Job 1:
 Lint:
@@ -17,19 +18,19 @@ Lint:
     - yarn prettier:fix
 
 #Job 2:
-Staging:
-    stage: deploy
+staging:
+    stage: staging
+    image: ruby:latest
     script:
-        - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-stg.git
-        - git push -f heroku master
+        - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
     only:
-        - developoment
+        - development
 
 #Job 2:
-# Production:
-#     stage: deploy
-#     script:
-#         - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-prd.git
-#         - git push -f heroku master
-#     only:
-#         - master
+production:
+    stage: deploy_production
+    image: ruby:latest
+    script:
+        - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+    only:
+        - master
