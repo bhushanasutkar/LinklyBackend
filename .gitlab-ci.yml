@@ -13,7 +13,7 @@ stages:
 Lint:
   stage: lint
   script:
-    - npm install
+    - yarn install
     - yarn lint:fix
     - yarn prettier:fix
 
