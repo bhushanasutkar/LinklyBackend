@@ -6,8 +6,8 @@ const router = express.Router();
 
 const defaultRoutes = [];
 
-const devRoutes = [
-  // routes available only in development mode
+const devOrStageRoutes = [
+  // routes available only in development/stage mode
   {
     path: '/sample',
     route: sampleRoute,
@@ -19,8 +19,8 @@ defaultRoutes.forEach((route) => {
 });
 
 /* istanbul ignore next */
-if (config.env === 'development') {
-  devRoutes.forEach((route) => {
+if (config.env === 'development' || config.env === 'stage') {
+  devOrStageRoutes.forEach((route) => {
     router.use(route.path, route.route);
   });
 }
