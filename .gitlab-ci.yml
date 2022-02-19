@@ -19,7 +19,7 @@ Lint:
 
 #Job 2:
 staging:
-    stage: staging
+    stage: deploy_staging
     image: ruby:latest
     script:
         - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
