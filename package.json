@@ -1,5 +1,5 @@
 {
-  "name": "fz-appsumo",
+  "name": "canned-api",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
@@ -7,7 +7,7 @@
   "author": "",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=12.0.0 < 17.5.0"
+    "node": ">=12.0.0"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
