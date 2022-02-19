@@ -1,3 +1,22 @@
+image: node:alpine
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - lint
+  - deploy
+
+# Job 1:
+Lint:
+  stage: lint
+  script:
+    - npm install
+    - yarn lint:fix
+    - yarn prettier:fix
+
+#Job 2:
 staging:
     stage: deploy
     script:
@@ -6,10 +25,11 @@ staging:
     only:
         - developoment
 
+#Job 2:
 production:
     stage: deploy
     script:
-        - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-stg.git
+        - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-prd.git
         - git push -f heroku master
     only:
         - master
