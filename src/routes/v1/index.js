@@ -8,12 +8,11 @@ const defaultRoutes = [
   {
     path: '/sample',
     route: sampleRoute,
-  }
+  },
 ];
 
 const devRoutes = [
   // routes available only in development mode
-
 ];
 
 defaultRoutes.forEach((route) => {

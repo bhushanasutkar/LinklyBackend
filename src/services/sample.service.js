@@ -10,5 +10,5 @@ const hello = async (name) => {
 };
 
 module.exports = {
-  hello
+  hello,
 };
