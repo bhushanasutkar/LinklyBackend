@@ -16,6 +16,9 @@ Lint:
     - yarn install
     - yarn lint
     - yarn prettier
+  only:
+    - development
+    - main
 
 #Job 2:
 staging:
