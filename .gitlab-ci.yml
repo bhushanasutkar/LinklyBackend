@@ -1,0 +1,42 @@
+image: node:16.14-alpine
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - lint
+  - deploy_staging
+  - deploy_production
+
+# Job 1:
+Lint:
+  stage: lint
+  script:
+    - yarn install
+    - yarn lint
+    - yarn prettier
+
+#Job 2:
+staging:
+    stage: deploy_staging
+    image: ruby:latest
+    script:
+        - apt-get update -qy
+        - apt-get install -y ruby-dev
+        - gem install dpl
+        - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
+    only:
+        - development
+
+#Job 2:
+production:
+    stage: deploy_production
+    image: ruby:latest
+    script:
+        - apt-get update -qy
+        - apt-get install -y ruby-dev
+        - gem install dpl
+        - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+    only:
+        - master
