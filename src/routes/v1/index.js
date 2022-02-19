@@ -4,15 +4,14 @@ const config = require('../../config/config');
 
 const router = express.Router();
 
-const defaultRoutes = [
+const defaultRoutes = [];
+
+const devRoutes = [
+  // routes available only in development mode
   {
     path: '/sample',
     route: sampleRoute,
   },
-];
-
-const devRoutes = [
-  // routes available only in development mode
 ];
 
 defaultRoutes.forEach((route) => {

@@ -10,6 +10,13 @@ const hello = catchAsync(async (req, res) => {
   });
 });
 
+const helloGet = catchAsync(async (req, res) => {
+  return res.send({
+    message: 'API working',
+  });
+});
+
 module.exports = {
   hello,
+  helloGet,
 };

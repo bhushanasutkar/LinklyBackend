@@ -14,8 +14,8 @@ Lint:
   stage: lint
   script:
     - yarn install
-    - yarn lint:fix
-    - yarn prettier:fix
+    - yarn lint
+    - yarn prettier
 
 #Job 2:
 staging:
