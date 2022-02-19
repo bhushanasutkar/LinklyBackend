@@ -17,7 +17,7 @@ Lint:
     - yarn prettier:fix
 
 #Job 2:
-staging:
+Staging:
     stage: deploy
     script:
         - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-stg.git
@@ -26,10 +26,10 @@ staging:
         - developoment
 
 #Job 2:
-production:
-    stage: deploy
-    script:
-        - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-prd.git
-        - git push -f heroku master
-    only:
-        - master
+# Production:
+#     stage: deploy
+#     script:
+#         - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/canned-api-prd.git
+#         - git push -f heroku master
+#     only:
+#         - master
