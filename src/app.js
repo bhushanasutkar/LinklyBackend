@@ -5,11 +5,13 @@ const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
 const cors = require('cors');
 const httpStatus = require('http-status');
+
 const config = require('./config/config');
 const morgan = require('./config/morgan');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const firebaseAuth = require('./middlewares/firebase-auth');
 
 const app = express();
 
@@ -39,7 +41,7 @@ app.use(cors());
 app.options('*', cors());
 
 // authentication
-// TODO: Add authentication middleware
+app.use(firebaseAuth);
 
 // v1 api routes
 app.use('/v1', routes);
