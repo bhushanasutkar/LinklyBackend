@@ -46,6 +46,11 @@ app.use(firebaseAuth);
 // v1 api routes
 app.use('/v1', routes);
 
+// test route
+app.get('/', (req, res) => {
+  res.json('Server Running.');
+});
+
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
