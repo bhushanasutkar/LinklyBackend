@@ -11,13 +11,13 @@ const decodeToken = async (req, res, next) => {
       if (decodedToken) {
         next();
       } else {
-        res.json({ message: 'Unauthorized!' });
+        res.json({ message: 'Unauthorized!' }).status(401);
       }
     } else {
-      res.json({ message: 'Unauthorized!' });
+      res.json({ message: 'Unauthorized!' }).status(401);
     }
   } catch (err) {
-    res.json({ message: 'Internal error!' });
+    res.json({ message: 'Unauthorized' }).status(401);
   }
 };
 
