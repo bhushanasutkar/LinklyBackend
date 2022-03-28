@@ -21,25 +21,25 @@ Lint:
     - main
 
 #Job 2:
-staging:
-    stage: deploy_staging
-    image: ruby:latest
-    script:
-        - apt-get update -qy
-        - apt-get install -y ruby-dev
-        - gem install dpl
-        - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
-    only:
-        - development
+# staging:
+#     stage: deploy_staging
+#     image: ruby:latest
+#     script:
+#         - apt-get update -qy
+#         - apt-get install -y ruby-dev
+#         - gem install dpl
+#         - dpl --provider=heroku --app=$HEROKU_APP_STAGING --api-key=$HEROKU_API_KEY
+#     only:
+#         - development
 
-#Job 2:
-production:
-    stage: deploy_production
-    image: ruby:latest
-    script:
-        - apt-get update -qy
-        - apt-get install -y ruby-dev
-        - gem install dpl
-        - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
-    only:
-        - main
+# #Job 2:
+# production:
+#     stage: deploy_production
+#     image: ruby:latest
+#     script:
+#         - apt-get update -qy
+#         - apt-get install -y ruby-dev
+#         - gem install dpl
+#         - dpl --provider=heroku --app=$HEROKU_APP_PRODUCTION --api-key=$HEROKU_API_KEY
+#     only:
+#         - main
