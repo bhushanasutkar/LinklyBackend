@@ -42,17 +42,35 @@ router.post('/createuser', function (req, res) {
   );
 });
 
+// for user login
+router.post('/login', function (req, res) {
+  const { email, password } = req.body;
+  let success = false;
+  const query = `SELECT UserId, Name, Email FROM users WHERE Email='${email}' and Password='${password}' `;
+  db.query(query, (err, result) => {
+    if (err) {
+      res.json(err);
+    } else if (result.length === 0) {
+      success = false;
+      res.json({ success, result });
+    } else {
+      success = true;
+
+      res.json({ success, result });
+    }
+  });
+});
+
 // for displaying user all the links according to his current level->Working
 router.get('/userlinks/:id', function (req, res) {
   const varid = req.params.id;
-  // let websitelist = [];
-  // let ansarray = [];
-  const query = ` SELECT * FROM (SELECT * FROM website_data WHERE  website_data.Link_level=${varid} AND website_data.Status=1) AS a INNER JOIN linktable ON linktable.Link_Id=a.WebsiteID `;
+  const query = ` SELECT * FROM (SELECT * FROM website_data WHERE  website_data.Link_level=${varid} ) AS a INNER JOIN linktable ON linktable.Link_Id=a.WebsiteID AND linktable.Link_Status=1 `;
   db.query(query, (err, result) => {
     if (err) {
       res.send(err);
     } else {
-      res.json(result);
+      // console.log(result);
+      res.send(result);
     }
   });
 });
