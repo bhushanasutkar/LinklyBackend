@@ -62,9 +62,25 @@ router.post('/login', function (req, res) {
 });
 
 // for displaying user all the links according to his current level->Working
+// one Query connecting userlink table (Archieve) is to be implemented where Archieve = NULL
+// links will be there in backlink vault
 router.get('/userlinks/:id', function (req, res) {
   const varid = req.params.id;
-  const query = ` SELECT * FROM (SELECT * FROM website_data WHERE  website_data.Link_level=${varid} ) AS a INNER JOIN linktable ON linktable.Link_Id=a.WebsiteID AND linktable.Link_Status=1 `;
+  const query = `   SELECT * FROM (SELECT * FROM (SELECT Archive , Link_id As variable  FROM user_link_table where user_link_table.Archive=null) AS a RIGHT JOIN linktable ON linktable.Link_Id=a.variable AND linktable.Link_Status=1 ) AS  b Join  website_data   ON website_data.WebsiteID=b.WebsiteId And website_data.Link_level=${varid} `;
+  db.query(query, (err, result) => {
+    if (err) {
+      res.send(err);
+    } else {
+      // console.log(result);
+      res.send(result);
+    }
+  });
+});
+// one Query connecting userlink table (Archieve) is to be implemented where Archieve = 1
+// all links will go in backlink manager
+router.get('/userlinks/accepted/:id', function (req, res) {
+  const varid = req.params.id;
+  const query = `  SELECT * FROM (SELECT * FROM (SELECT Archive , Link_id As variable  FROM user_link_table where user_link_table.Archive=1) AS a RIGHT JOIN linktable ON linktable.Link_Id=a.variable AND linktable.Link_Status=1 ) AS  b Join  website_data   ON website_data.WebsiteID=b.WebsiteId And website_data.Link_level=${varid}  `;
   db.query(query, (err, result) => {
     if (err) {
       res.send(err);
@@ -134,11 +150,11 @@ router.put('/link-vault/update_feedback/:id/:webid', function (req, res) {
   });
 });
 
-// for inserting user specific link if user click on accepted
-router.post('/link-vault/link_status/:id', function (req, res) {
-  const varid = req.params.id;
-  const { number, text } = req.body;
-  const query = `INSERT INTO user_link_table VALUES (${number},${varid},${text},${text},${text}, Accepted,${text},100,${text}) `;
+// for inserting user specific link if user click on accepted/reject
+// Working
+router.post('/link-vault/link_status', function (req, res) {
+  const { linkid, UserId, Archive } = req.body;
+  const query = `INSERT INTO user_link_table(Link_id,User_ID,Archive) VALUES (${linkid},${UserId},${Archive}) `;
 
   db.query(query, (err, result) => {
     if (err) {
@@ -155,6 +171,40 @@ router.post('/link-vault/metadata', function (req, res) {
   const MetaInfo = req.body;
   const query = `INSERT  INTO website_data VALUES (${MetaInfo.Name},${MetaInfo.Description},${MetaInfo.Contact_Name},${MetaInfo.Email},${MetaInfo.Average_Pageviews},${MetaInfo.Traffic_Source},${MetaInfo.Email})`;
   db.query(query, (err, result) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+// for hiding the link whenever user clicks on hide button
+// Working
+router.put('/link-vault/linkstatushide', function (req, res) {
+  const { linkid } = req.body;
+  // console.log('Hitiing');
+  const query = `UPDATE user_link_table SET user_link_table.Archive=0 WHERE  user_link_table.Link_id=?`;
+  const queryparams = [linkid];
+  db.query(query, queryparams, (err, result) => {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+// for adding link in backlink manager when user clicks on accept button
+// Working
+router.put('/link-vault/linkstatusaccept', function (req, res) {
+  const { linkid, price } = req.body;
+  const query = `UPDATE user_link_table SET user_link_table.Archive=1 WHERE  user_link_table.Link_id=?`;
+  const queryparams = [linkid];
+  if (price === 'PAID') {
+    //  stripe
+  }
+  db.query(query, queryparams, (err, result) => {
     if (err) {
       res.send(err);
     } else {
