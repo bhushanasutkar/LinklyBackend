@@ -20,7 +20,7 @@ Lint:
     - development
     - main
 
-Job 2:
+# Job 2:
 staging:
     stage: deploy_staging
     image: ruby:latest
