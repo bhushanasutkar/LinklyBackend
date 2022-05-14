@@ -79,7 +79,7 @@ router.get('/userlinks/:id', function (req, res) {
 // all links will be displayed in backlink manager
 router.get('/userlinks/accepted/:id', function (req, res) {
   const userid = req.params.id;
-  const query = `select * from website_data as wd inner join  (select WebsiteId, Link_Type,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID=${userid} and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 `;
+  const query = `select * from website_data as wd inner join  (select WebsiteId, Link_Type,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID=${userid} and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 `;
   db.query(query, (err, result) => {
     if (err) {
       res.send(err);
@@ -208,5 +208,15 @@ router.put('/link-vault/linkstatusaccept', function (req, res) {
     }
   });
 });
+
+router.get(
+  'https://api.ritekit.com/v2/company-insights/logo?client_id=60c077eee8768fcc581ebbb780d3aee62acbaa2903e4&domain=evernote.com&generateFallbackLogo=0&squareLogoSize=256&squareLogoBackground=original',
+
+  function (req, res) {
+    // const { domain } = req.body;
+
+    res.send(req.query);
+  }
+);
 
 module.exports = router;
