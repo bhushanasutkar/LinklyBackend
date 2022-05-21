@@ -8,7 +8,6 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'stage').required(),
     PORT: Joi.number().default(5000),
-    MONGODB_URL: Joi.string().required().description('Mongo DB url'),
     FIREBASE_ACC_TYPE: Joi.string().default('service_account'),
     FIREBASE_PROJECT_ID: Joi.string().required().description('Firebase Project Id'),
     FIREBASE_PRIVATE_KEY_ID: Joi.string().alphanum().required().description('Firebase Private Key Id'),
@@ -31,14 +30,6 @@ if (error) {
 module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
-  mongoose: {
-    url: envVars.MONGODB_URL,
-    options: {
-      useCreateIndex: true,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    },
-  },
   firebaseConfig: {
     type: envVars.FIREBASE_ACC_TYPE,
     project_id: envVars.FIREBASE_PROJECT_ID,
