@@ -1,5 +1,7 @@
 const express = require('express');
 const sampleRoute = require('./sample.route');
+const userlinkroute = require('./userlink.route');
+const userroute = require('./user.route');
 const config = require('../../config/config');
 
 const router = express.Router();
@@ -11,6 +13,14 @@ const devOrStageRoutes = [
   {
     path: '/sample',
     route: sampleRoute,
+  },
+  {
+    path: '/userlink',
+    route: userlinkroute,
+  },
+  {
+    path: '/user',
+    route: userroute,
   },
 ];
 
@@ -25,4 +35,4 @@ if (config.env === 'development' || config.env === 'stage') {
   });
 }
 
-module.exports = router;
+module.exports.router = router;
