@@ -46,7 +46,8 @@
 //     '<Buffer 89 50 4e 47 0d 0a 1a 0a 00 00 00 0d 49 48 44 52 00 00 00 80 00 00 00 60 08 06 00 00 00 d5 7a 7a 49 00 00 0b dc 49 44 41 54 78 9c ec 9d 79 70 14 55 1e ... 3043 more bytes>';
 //   const path = imagename;
 
-//   imageUpload(path, buffer);
+//   const res =  imageUpload(path, buffer);
+//   console.log(res)
 //   const url = s3Url + path;
 //   console.log(url);
 //   const query = `Update website_data set Icon=?  WHERE  website_data.Name=?`;
