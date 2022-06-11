@@ -18,6 +18,10 @@ const envVarsSchema = Joi.object()
     FIREBASE_TOKEN_URI: Joi.string().uri().required().description('Firebase token URI'),
     FIREBASE_AUTH_CERT: Joi.string().uri().required().description('Firebase Auth Certificate'),
     FIREBASE_CLIENT_CERT: Joi.string().uri().required().description('Firebase Client Certificate'),
+    BUCKET_NAME: Joi.string().required().description('S3 Bucket Name'),
+    REGION: Joi.string().required().description('S3 Region'),
+    AWS_ACCESS_KEY_ID: Joi.string().required().description('AWS Access Key Id'),
+    AWS_SECRET_ACCESS_KEY: Joi.string().required().description('AWS Access Key'),
   })
   .unknown();
 
@@ -41,5 +45,11 @@ module.exports = {
     token_uri: envVars.FIREBASE_TOKEN_URI,
     auth_provider_x509_cert_url: envVars.FIREBASE_AUTH_CERT,
     client_x509_cert_url: envVars.FIREBASE_CLIENT_CERT,
+  },
+  s3Config: {
+    bucketName: envVars.BUCKET_NAME,
+    region: envVars.REGION,
+    accessKeyId: envVars.AWS_ACCESS_KEY_ID,
+    accesskey: envVars.AWS_SECRET_ACCESS_KEY,
   },
 };
