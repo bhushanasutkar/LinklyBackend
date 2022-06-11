@@ -1,18 +1,18 @@
 const express = require('express');
-const validate = require('../../middlewares/validate');
+// const validate = require('../../middlewares/validate');
 const userlinkcontroller = require('../../controllers/userlink.controller');
-const userlinkValidation = require('../../validations/userlink.validation');
+// const userlinkValidation = require('../../validations/userlink.validation');
 
 const router = express.Router();
 
 // for displaying user all the links according to his current level
 // links will be displayed in backlink vault
-router.post('/', validate(userlinkValidation.userlink), userlinkcontroller.userlinks);
-
+router.post('/', userlinkcontroller.userlinks);
+// , validate(userlinkValidation.userlink)
 // for displaying accepted links
 // all links will be displayed in backlink manager
-router.post('/accepted', validate(userlinkValidation.accepted), userlinkcontroller.useracceptedlinks);
-
+router.post('/accepted', userlinkcontroller.useracceptedlinks);
+// validate(userlinkValidation.accepted),
 // for displaying linkgiver links
 // all links will be displayed in Libk Giver Admin
 router.post('/linkgiver', userlinkcontroller.linkgiverlinks);
@@ -24,7 +24,10 @@ router.put('/status/', userlinkcontroller.linkcredentials);
 router.post('/credentials', userlinkcontroller.savelink);
 
 // for updating the status of saved link
-router.put('/update_status', userlinkcontroller.statusupdate);
+router.post('/update_status', userlinkcontroller.statusupdate);
+
+// for updating the status of saved link
+router.post('/get_update_status', userlinkcontroller.getstatusupdate);
 
 // for updating the feedback of saved link
 router.put('/update_feedback', userlinkcontroller.feedbackupdate);
@@ -39,7 +42,7 @@ router.put('/link_insertion', userlinkcontroller.insertioncontent);
 router.put('/send_blog', userlinkcontroller.sendblogcontent);
 
 // for link publish popup
-router.put('/publishlink', userlinkcontroller.publishlink);
+router.post('/publishlink', userlinkcontroller.publishlink);
 
 // for request re work popup
 router.put('/requestrework', userlinkcontroller.requestrework);
@@ -48,13 +51,23 @@ router.put('/requestrework', userlinkcontroller.requestrework);
 router.put('/reject', userlinkcontroller.reject);
 
 // for adding link to monitor
-router.put('/addlinkmonitor', userlinkcontroller.addlinkmonitor);
+router.post('/addlinkmonitor', userlinkcontroller.addlinkmonitor);
+
+// for getting  all orderids of a user
+router.post('/orderids', userlinkcontroller.orderids);
+
+// for fetching link in monitor
+router.post('/monitorlink', userlinkcontroller.monitorlink);
 
 // for getting  link from monitor
 router.post('/orderedlinks', userlinkcontroller.orderedlink);
 
+// for getting  sourcelink and target link fo given orderid
+router.post('/getslandtl', userlinkcontroller.getslandtl);
+
 // for inserting user specific link if user click on accepted/reject
-router.post('/link_status', validate(userlinkValidation.insertonclick), userlinkcontroller.insertlink);
+router.post('/link_status', userlinkcontroller.insertlink);
+// validate(userlinkValidation.insertonclick)
 
 // for  the feedback and status of saved link->Working
 router.put('/status/', userlinkcontroller.linkcredentials);

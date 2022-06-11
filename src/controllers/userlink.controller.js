@@ -4,15 +4,15 @@ const catchAsync = require('../utils/catchAsync');
 const { userlinkservices } = require('../services');
 
 const userlinks = catchAsync(async (req, res) => {
-  const { userid } = req.body;
-  const Links = await userlinkservices.userlinkss(userid);
+  const { userid, size } = req.body;
+  const Links = await userlinkservices.userlinkss(userid, size);
   res.status(httpStatus.OK);
   return res.send({ Links });
 });
 
 const useracceptedlinks = catchAsync(async (req, res) => {
-  const { userid } = req.body;
-  const AcceptedLinks = await userlinkservices.useracceptedlinkss(userid);
+  const { userid, acceptsize } = req.body;
+  const AcceptedLinks = await userlinkservices.useracceptedlinkss(userid, acceptsize);
   res.status(httpStatus.OK);
   return res.send({
     AcceptedLinks,
@@ -38,8 +38,8 @@ const linkcredentials = catchAsync(async (req, res) => {
 });
 
 const savelink = catchAsync(async (req, res) => {
-  const { userid, linkid, username, password, imageurl } = req.body;
-  const response = await userlinkservices.savelinkss(userid, linkid, username, password, imageurl);
+  const { Linkid, UserId, username, password, notes, fileimg } = req.body;
+  const response = await userlinkservices.savelinkss(Linkid, UserId, username, password, notes, fileimg);
   res.status(httpStatus.OK);
   return res.send({
     response,
@@ -47,10 +47,18 @@ const savelink = catchAsync(async (req, res) => {
 });
 
 const statusupdate = catchAsync(async (req, res) => {
-  const { status } = req.body;
-  const getid = req.params.id;
-  const getwebid = req.params.webid;
-  const response = await userlinkservices.statusupdates(status, getid, getwebid);
+  const { Linkid, UserId, statusvalue } = req.body;
+
+  const response = await userlinkservices.statusupdates(Linkid, UserId, statusvalue);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const getstatusupdate = catchAsync(async (req, res) => {
+  const { Linkid, UserId } = req.body;
+  const response = await userlinkservices.getstatusupdates(Linkid, UserId);
   res.status(httpStatus.OK);
   return res.send({
     response,
@@ -94,8 +102,8 @@ const sendblogcontent = catchAsync(async (req, res) => {
 });
 
 const publishlink = catchAsync(async (req, res) => {
-  const { Linkid, UserId, input1 } = req.body;
-  const response = await userlinkservices.publishlinks(Linkid, UserId, input1);
+  const { Linkid, UserId, orderid, souurcelink, targetlink } = req.body;
+  const response = await userlinkservices.publishlinks(Linkid, UserId, orderid, souurcelink, targetlink);
   res.status(httpStatus.OK);
   return res.send({
     response,
@@ -121,8 +129,8 @@ const reject = catchAsync(async (req, res) => {
 });
 
 const orderedlink = catchAsync(async (req, res) => {
-  // const { Linkid, UserId, input1, input2 } = req.body;
-  const Orderlinks = await userlinkservices.orderedlinks();
+  const { userid } = req.body;
+  const Orderlinks = await userlinkservices.orderedlinks(userid);
   res.status(httpStatus.OK);
   return res.send({
     Orderlinks,
@@ -130,11 +138,38 @@ const orderedlink = catchAsync(async (req, res) => {
 });
 
 const addlinkmonitor = catchAsync(async (req, res) => {
-  const { Linkid, UserId, input1, input2, input3, input4 } = req.body;
-  const response = await userlinkservices.addlinkmonitors(Linkid, UserId, input1, input2, input3, input4);
+  const { Linkid, UserId, orderid, souurcelink, targetlink, reltag } = req.body;
+  const response = await userlinkservices.addlinkmonitors(Linkid, UserId, orderid, souurcelink, targetlink, reltag);
   res.status(httpStatus.OK);
   return res.send({
     response,
+  });
+});
+
+const monitorlink = catchAsync(async (req, res) => {
+  const { userid } = req.body;
+  const Monitorlinks = await userlinkservices.monitorlinks(userid);
+  res.status(httpStatus.OK);
+  return res.send({
+    Monitorlinks,
+  });
+});
+
+const orderids = catchAsync(async (req, res) => {
+  const { UserId } = req.body;
+  const Orderids = await userlinkservices.orderidss(UserId);
+  res.status(httpStatus.OK);
+  return res.send({
+    Orderids,
+  });
+});
+
+const getslandtl = catchAsync(async (req, res) => {
+  const { UserId, orderid } = req.body;
+  const Orderids = await userlinkservices.getslandtls(UserId, orderid);
+  res.status(httpStatus.OK);
+  return res.send({
+    Orderids,
   });
 });
 
@@ -154,6 +189,7 @@ module.exports = {
   linkcredentials,
   savelink,
   statusupdate,
+  getstatusupdate,
   feedbackupdate,
   exchangeinfo,
   insertioncontent,
@@ -163,5 +199,8 @@ module.exports = {
   reject,
   orderedlink,
   addlinkmonitor,
+  monitorlink,
+  orderids,
+  getslandtl,
   insertlink,
 };

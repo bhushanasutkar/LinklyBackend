@@ -1,10 +1,10 @@
 const { db } = require('../dbconfig');
 
-const userlinkss = async (userid) => {
+const userlinkss = async (userid, size) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1`;
+        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1 LIMIT ${size}`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -19,12 +19,12 @@ const userlinkss = async (userid) => {
   });
 };
 
-const useracceptedlinkss = async (userid) => {
+const useracceptedlinkss = async (userid, acceptsize) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
         // const query = `select * from website_data as wd inner join  (select WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd,registration_link, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 LIMIT ${acceptsize}
         `;
         db.query(query, (err, res) => {
           if (err) {
@@ -44,7 +44,7 @@ const linkgiverlinkss = async (userid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and link_giver_id='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where link_giver_id!='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -78,12 +78,14 @@ const linkcredentialss = async (userId, LinkId) => {
   });
 };
 
-const savelinkss = async (userid, linkid, username, password, imageurl) => {
+const savelinkss = async (Linkid, UserId, username, password, notes, fileimg) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `INSERT INTO user_link_table (username,password,image_url)VALUES (${username},${password},${imageurl} where Link_id=${linkid} and User_ID=${userid})`;
-        db.query(query, (err, res) => {
+        const query = `UPDATE user_link_table set username=?, password=?, image_url=?,Notes=?  where Link_id=? and User_ID=?`;
+        // VALUES(${username},${password},'${fileimg}',${notes})
+        const queryparams = [username, password, fileimg, notes, Linkid, UserId];
+        db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
           } else {
@@ -96,12 +98,32 @@ const savelinkss = async (userid, linkid, username, password, imageurl) => {
     })();
   });
 };
-const statusupdates = async (status, getid, getwebid) => {
+const statusupdates = async (Linkid, UserId, statusvalue) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
         const query = `UPDATE user_link_table SET user_link_table.status= ? WHERE Link_id=? and User_ID=?`;
-        const queryparams = [status, getwebid, getid];
+        const queryparams = [statusvalue, Linkid, UserId];
+        db.query(query, queryparams, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const getstatusupdates = async (Linkid, UserId) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `SELECT  user_link_table.status from user_link_table WHERE Link_id=? and User_ID=?`;
+        const queryparams = [Linkid, UserId];
         db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
@@ -196,13 +218,69 @@ const sendblogcontents = async (Linkid, UserId, input1, input2) => {
   });
 };
 
-const publishlinks = async (Linkid, UserId, input1) => {
+const publishlinks = async (Linkid, UserId, orderid, souurcelink, targetlink) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `UPDATE user_link_table SET  user_link_table.source_link= ? WHERE  Link_id=? and User_ID=?`;
-        const queryparams = [input1, Linkid, UserId];
-        db.query(query, queryparams, (err, res) => {
+        const query = `INSERT INTO linkmonitor (OrderId, linkmonitor.status) VALUES ('${orderid}', 'Present'); UPDATE user_link_table SET source_link='${souurcelink}',target_link='${targetlink}' WHERE order_id = '${orderid}' AND user_link_table.PrimaryID <> 0 `;
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const monitorlinks = async (UserId) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `select * from user_link_table as ul join linkmonitor on ul.order_id=linkmonitor.OrderId where ul.User_ID='${UserId}'`;
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const orderidss = async (UserId) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `select order_id from user_link_table  where User_ID='${UserId}' and order_id IS NOT NULL`;
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const getslandtls = async (UserId, orderid) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `select source_link,target_link  from user_link_table  where User_ID='${UserId}' and order_id='${orderid}'`;
+        db.query(query, (err, res) => {
           if (err) {
             reject(err);
           } else {
@@ -256,11 +334,11 @@ const rejects = async (Linkid, UserId, input1, input2) => {
   });
 };
 
-const orderedlinks = async () => {
+const orderedlinks = async (userid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `select * from linktable as lt inner join( select ult.Link_id, ult.User_ID,ult.status, ult.feedback,ult.Notes,ult.link_giver_id,ult.exchange_url, ult.exchange_topics,ult.doc_url,ult.source_link,ult.reason_for_rework,ult.reason_for_rejection,ult.target_link,ult.order_id,ult.amout_paid from user_link_table as ult inner join linkmonitor on  ult.order_id=linkmonitor.OrderId) as md on lt.Link_Id=md.Link_id`;
+        const query = `SELECT * FROM linktable AS lt  JOIN user_link_table ON lt.Link_Id=user_link_table.Link_id WHERE user_link_table.User_ID='${userid}' AND user_link_table.order_id IS NOT NULL`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -275,18 +353,16 @@ const orderedlinks = async () => {
   });
 };
 
-const addlinkmonitors = async (Linkid, UserId, input1, input2, input3) => {
+const addlinkmonitors = async (Linkid, UserId, orderid, souurcelink, targetlink) => {
+  const date = new Date(); // some mock date
+  const d = new Date(date);
+  const addedon = d.toDateString();
+
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `INSERT INTO user_link_table (order_id, source_link, target_link)
-        OUTPUT inserted.order_id, inserted.source_link, inserted.target_link
-        INTO linkmonitor(OrderId,status)
-        VALUES('${input1}','${input2}','${input3}'), ('${input1}','${input1}','PRESENT')
-        GO`;
-        // const query = `UPDATE user_link_table SET  user_link_table.order_id= ?,user_link_table.source_link= ?,user_link_table.target_link= ? WHERE  Link_id=? and User_ID=?`;
-        const queryparams = [input1, input2, input3, Linkid, UserId];
-        db.query(query, queryparams, (err, res) => {
+        const query = `INSERT INTO linkmonitor (OrderId, linkmonitor.status) VALUES (${orderid},'Present'); UPDATE user_link_table SET source_link='${souurcelink}',target_link='${targetlink}',link_added_on='${addedon}' WHERE order_id=${orderid} AND user_link_table.PrimaryID <> 0`;
+        db.query(query, (err, res) => {
           if (err) {
             reject(err);
           } else {
@@ -299,12 +375,18 @@ const addlinkmonitors = async (Linkid, UserId, input1, input2, input3) => {
     })();
   });
 };
-
+// const query = `UPDATE user_link_table SET  user_link_table.order_id= ?,user_link_table.source_link= ?,user_link_table.target_link= ? WHERE  Link_id=? and User_ID=?`;
+// const queryparams = [Linkid,UserId, orderid,souurcelink,targetlink,reltag];
 const insertlinks = async (linkid, UserId, Archive) => {
+  // const today = new Date();
+  // const dateString = today.toISOString();
+  const date = new Date(); // some mock date
+  const milliseconds = date.getTime();
+
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `INSERT INTO user_link_table(Link_id,User_ID,Archive) VALUES (${linkid},'${UserId}',${Archive}) `;
+        const query = `INSERT INTO user_link_table(Link_id,User_ID,Archive,order_id) VALUES (${linkid},'${UserId}',${Archive},'${milliseconds}')`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -326,6 +408,7 @@ module.exports = {
   linkcredentialss,
   savelinkss,
   statusupdates,
+  getstatusupdates,
   feedbackupdates,
   exchangeinfos,
   insertioncontents,
@@ -335,5 +418,8 @@ module.exports = {
   rejects,
   orderedlinks,
   addlinkmonitors,
+  monitorlinks,
+  orderidss,
+  getslandtls,
   insertlinks,
 };
