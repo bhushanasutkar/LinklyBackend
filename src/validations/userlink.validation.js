@@ -6,7 +6,7 @@ const userlink = {
     userid: Joi.string().required(),
   }),
   headers: Joi.object().keys({
-    authorization: Joi.string().required()
+    authorization: Joi.string().required(),
   }),
 };
 const accepted = {
@@ -14,7 +14,7 @@ const accepted = {
     userid: Joi.string().required(),
   }),
   headers: Joi.object().keys({
-    authorization: Joi.string().required()
+    authorization: Joi.string().required(),
   }),
 };
 const insertonclick = {
@@ -24,12 +24,12 @@ const insertonclick = {
     Archive: Joi.number().required(),
   }),
   headers: Joi.object().keys({
-    authorization: Joi.string().required()
+    authorization: Joi.string().required(),
   }),
 };
 
 module.exports = {
-    userlink,
-    accepted,
-    insertonclick,
+  userlink,
+  accepted,
+  insertonclick,
 };
