@@ -19,7 +19,7 @@ const envVarsSchema = Joi.object()
     FIREBASE_AUTH_CERT: Joi.string().uri().required().description('Firebase Auth Certificate'),
     FIREBASE_CLIENT_CERT: Joi.string().uri().required().description('Firebase Client Certificate'),
     BUCKET_NAME: Joi.string().required().description('S3 Bucket Name'),
-    REGION: Joi.string().required().description('S3 Region'),
+    REGION: Joi.string().description('S3 Region'),
     AWS_ACCESS_KEY_ID: Joi.string().required().description('AWS Access Key Id'),
     AWS_SECRET_ACCESS_KEY: Joi.string().required().description('AWS Access Key'),
   })

@@ -361,7 +361,7 @@ const addlinkmonitors = async (Linkid, UserId, orderid, souurcelink, targetlink)
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `INSERT INTO linkmonitor (OrderId, linkmonitor.status) VALUES (${orderid},'Present'); UPDATE user_link_table SET source_link='${souurcelink}',target_link='${targetlink}',link_added_on='${addedon}' WHERE order_id=${orderid} AND user_link_table.PrimaryID <> 0`;
+        const query = `INSERT INTO linkmonitor (OrderId, linkmonitor.status) VALUES (${orderid},'Not Checked'); UPDATE user_link_table SET source_link='${souurcelink}',target_link='${targetlink}',link_added_on='${addedon}' WHERE order_id=${orderid} AND user_link_table.PrimaryID <> 0`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -401,6 +401,44 @@ const insertlinks = async (linkid, UserId, Archive) => {
   });
 };
 
+const iconindatabases = async (imagename) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `SELECT Icon FROM website_data WHERE website_data.Name='${imagename}'`;
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const insericons = async (inserturl, imagename) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `UPDATE website_data SET Icon = '${inserturl}' WHERE website_data.Name='${imagename}' AND website_data.WebsiteID>0; `;
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
 module.exports = {
   userlinkss,
   useracceptedlinkss,
@@ -422,4 +460,6 @@ module.exports = {
   orderidss,
   getslandtls,
   insertlinks,
+  iconindatabases,
+  insericons,
 };

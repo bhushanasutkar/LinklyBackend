@@ -1,3 +1,12 @@
+// const express = require('express');
+
+// const router = express.Router();
+// const uploadFile = require('../../models/plugins/s3');
+// router.post('/iconurl', function (req, res) {
+//   const { url, filename } = req.body;
+//   const geturl = uploadFile(url, filename);
+//   res.send(geturl);
+// });
 // /* eslint-disable prettier/prettier */
 // // const fs = require('fs');
 // const AWS = require('aws-sdk');
@@ -57,18 +66,6 @@
 //       res.send(err);
 //     } else {
 //       res.send(s3Url + path);
-//     }
-//   });
-// });
-
-// router.put('/linkly/icon/database', function (req, res) {
-//   const { imagename } = req.body;
-//   const query = `SELECT Icon FROM website_data WHERE website_data.Name='${imagename}'`;
-//   db.query(query, (err, result) => {
-//     if (err) {
-//       res.send(err);
-//     } else {
-//       res.send(result);
 //     }
 //   });
 // });

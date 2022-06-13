@@ -182,6 +182,24 @@ const insertlink = catchAsync(async (req, res) => {
   });
 });
 
+const iconindatabase = catchAsync(async (req, res) => {
+  const { imagename } = req.body;
+  const response = await userlinkservices.iconindatabases(imagename);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const insericon = catchAsync(async (req, res) => {
+  const { inserturl, imagename } = req.body;
+  const response = await userlinkservices.insericons(inserturl, imagename);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
 module.exports = {
   userlinks,
   useracceptedlinks,
@@ -203,4 +221,6 @@ module.exports = {
   orderids,
   getslandtl,
   insertlink,
+  insericon,
+  iconindatabase,
 };

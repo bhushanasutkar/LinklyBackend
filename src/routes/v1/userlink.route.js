@@ -2,8 +2,10 @@ const express = require('express');
 // const validate = require('../../middlewares/validate');
 const userlinkcontroller = require('../../controllers/userlink.controller');
 // const userlinkValidation = require('../../validations/userlink.validation');
+const getemail = require('../../middlewares/firebase-auth');
 
 const router = express.Router();
+const s3plugin = require('../../models/plugins/s3');
 
 // for displaying user all the links according to his current level
 // links will be displayed in backlink vault
@@ -72,6 +74,46 @@ router.post('/link_status', userlinkcontroller.insertlink);
 // for  the feedback and status of saved link->Working
 router.put('/status/', userlinkcontroller.linkcredentials);
 
+// for checking if icon tgere
+router.post('/icondatabase', userlinkcontroller.iconindatabase);
+
+// for inserting icon if not there
+router.post('/inserticon', userlinkcontroller.insericon);
+
+router.post('/email', async function (req, res) {
+  const { email } = req.body;
+  getemail(email)
+    .then((detail) => {
+      res.send({ userdetail: detail });
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
+router.post('/iconurl', function (req, res) {
+  const { imageurl, imagename } = req.body;
+  s3plugin
+    .uploadFile(imagename, imageurl)
+    .then((urll) => {
+      res.send({ url: urll });
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
+// router.put('/linkly/icon/database', function (req, res) {
+//   const { imagename } = req.body;
+//   const query = `SELECT Icon FROM website_data WHERE website_data.Name='${imagename}'`;
+//   db.query(query, (err, result) => {
+//     if (err) {
+//       res.send(err);
+//     } else {
+//       res.send(result);
+//     }
+//   });
+// });
 // for hiding the link whenever user clicks on hide button
 // router.put('/link-vault/linkstatushide', function (req, res) {
 //   const { linkid } = req.body;
@@ -101,22 +143,6 @@ router.put('/status/', userlinkcontroller.linkcredentials);
 //       res.send(result);
 //     }
 //   });
-// });
-
-// router.post('/email', function (req, res) {
-//   const { email } = req.body;
-//   admin
-//     .auth()
-//     .getUserByEmail(email)
-//     .then(function (userRecord) {
-//       // See the tables above for the contents of userRecord
-//       // console.log('Successfully fetched user data:', userRecord.toJSON());
-//       res.send(userRecord);
-//     })
-//     .catch(function (error) {
-//       // console.log('Error fetching user data:', error);
-//       res.send(error);
-//     });
 // });
 
 // for entering the new links information in website_metadata
