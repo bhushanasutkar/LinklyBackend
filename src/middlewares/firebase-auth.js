@@ -6,19 +6,17 @@ admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig),
 });
 
-const getemail = async (email) => {
-  admin
-    .auth()
-    .getUserByEmail(email)
-    .then(function (userRecord) {
-      // console.log(userRecord);
-      return userRecord;
-    })
-    .catch(function (error) {
-      // console.log('Error fetching user data:', error);
-      return error;
-    });
+const getEmail = async (email) => {
+  const userData = await admin.auth().getUserByEmail(email);
+  return {
+    uid: userData.uid,
+    displayName: userData.displayName,
+    email: userData.email,
+    emailVerified: userData.emailVerified,
+    photoUrl: userData.photoURL,
+  };
 };
+
 const decodeToken = async (req, res, next) => {
   const {
     headers: { authorization },
@@ -32,5 +30,14 @@ const decodeToken = async (req, res, next) => {
   }
 };
 
+// Test Code
+// getEmail('divyanshu@flickzee.com')
+//   .then((d) => {
+//     console.log(d);
+//   })
+//   .catch((e) => {
+//     console.log(e);
+//   });
+
 module.exports = decodeToken;
-module.exports = getemail;
+module.exports = getEmail;
