@@ -200,6 +200,24 @@ const insericon = catchAsync(async (req, res) => {
   });
 });
 
+const getcount = catchAsync(async (req, res) => {
+  const { UserId } = req.body;
+  const response = await userlinkservices.getcounts(UserId);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const getcountstatus = catchAsync(async (req, res) => {
+  const { UserId } = req.body;
+  const response = await userlinkservices.getcountstatuss(UserId);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
 module.exports = {
   userlinks,
   useracceptedlinks,
@@ -223,4 +241,6 @@ module.exports = {
   insertlink,
   insericon,
   iconindatabase,
+  getcount,
+  getcountstatus,
 };

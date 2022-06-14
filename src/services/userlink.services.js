@@ -439,6 +439,60 @@ const insericons = async (inserturl, imagename) => {
   });
 };
 
+const getcounts = async (UserId) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `SELECT
+        SUM(IF(status = 'In progress' , 1, 0)) AS Inprogress1,
+        SUM(IF(status = 'Link Accepted (by Link Taker)', 1, 0)) AS Inprogress2,
+        SUM(IF(status = 'Re-work', 1, 0)) AS Rework,
+        SUM(IF(status = 'Link Created', 1, 0)) AS LinkCreated,
+        SUM(IF(status = 'Re-Submitted after Re-work - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted1,
+        SUM(IF(status = 'Submitted - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted2
+        FROM user_link_table where User_ID='${UserId}'`;
+        //  console.log(query);
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const getcountstatuss = async (UserId) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `SELECT
+    SUM(IF(status = 'In progress' , 1, 0)) AS Inprogress1,
+    SUM(IF(status = 'Link Accepted (by Link Taker)', 1, 0)) AS Inprogress2,
+    SUM(IF(status = 'Re-work', 1, 0)) AS Rework,
+    SUM(IF(status = 'Link Created', 1, 0)) AS LinkCreated,
+    SUM(IF(status = 'Re-Submitted after Re-work - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted1,
+	  SUM(IF(status = 'Submitted - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted2
+    FROM user_link_table where User_ID='${UserId}'`;
+        //  console.log(query);
+        db.query(query, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
 module.exports = {
   userlinkss,
   useracceptedlinkss,
@@ -462,4 +516,6 @@ module.exports = {
   insertlinks,
   iconindatabases,
   insericons,
+  getcounts,
+  getcountstatuss,
 };

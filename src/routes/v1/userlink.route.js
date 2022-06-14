@@ -80,6 +80,12 @@ router.post('/icondatabase', userlinkcontroller.iconindatabase);
 // for inserting icon if not there
 router.post('/inserticon', userlinkcontroller.insericon);
 
+// for counting
+router.post('/getcount', userlinkcontroller.getcount);
+
+// for counting monitor table status
+router.post('/getcountstatus', userlinkcontroller.getcountstatus);
+
 router.post('/email', async function (req, res) {
   const { email } = req.body;
   getemail(email)
