@@ -1,28 +1,15 @@
-// const { Buffer } = require('buffer');
-// const request = require('request').defaults({ encoding: null });
+const { Buffer } = require('buffer');
+const axios = require('axios').default;
 
-// let a;
-// const url = 'https://logo.clearbit.com/facebook.com';
-// // getImgBuffer(url);
-// function getImgBuffer(url) {
-//   request.get(url, function (error, response, body) {
-//     if (!error && response.statusCode === 200) {
-//       console.log('Inside the func');
-//       const data = Buffer.from(body).toString('base64');
-//       // a = data;
-//       console.log(data);
-//       const a = Buffer.from(data, 'base64');
-//       console.log(a);
-//     }
-//   });
-// }
-// module.exports = getImgBuffer;
+const getImgBuffer = async (url) => {
+  const response = await axios.get(url, { responseType: 'arraybuffer' });
+  const base64 = Buffer.from(response.data, 'base64');
+  return {
+    buffer: base64,
+    contentType: response.headers['content-type'],
+  };
+};
 
-// // stackoverflow
-// input ->url
-// url -> buffer
-// buffer->base64
-
-// // blog
-// input->base64
-// base64->buffer
+module.exports = {
+  getImgBuffer,
+};

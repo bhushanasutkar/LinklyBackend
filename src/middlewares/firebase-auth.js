@@ -6,6 +6,19 @@ admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig),
 });
 
+const getemail = async (email) => {
+  admin
+    .auth()
+    .getUserByEmail(email)
+    .then(function (userRecord) {
+      // console.log(userRecord);
+      return userRecord;
+    })
+    .catch(function (error) {
+      // console.log('Error fetching user data:', error);
+      return error;
+    });
+};
 const decodeToken = async (req, res, next) => {
   const {
     headers: { authorization },
@@ -20,3 +33,4 @@ const decodeToken = async (req, res, next) => {
 };
 
 module.exports = decodeToken;
+module.exports = getemail;
