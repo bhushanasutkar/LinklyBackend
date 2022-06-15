@@ -39,5 +39,4 @@ const decodeToken = async (req, res, next) => {
 //     console.log(e);
 //   });
 
-module.exports = decodeToken;
-module.exports = getEmail;
+module.exports = { decodeToken, getEmail };

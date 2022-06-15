@@ -2,7 +2,7 @@ const express = require('express');
 // const validate = require('../../middlewares/validate');
 const userlinkcontroller = require('../../controllers/userlink.controller');
 // const userlinkValidation = require('../../validations/userlink.validation');
-const getEmail = require('../../middlewares/firebase-auth');
+const { getEmail } = require('../../middlewares/firebase-auth');
 
 const router = express.Router();
 const s3plugin = require('../../models/plugins/s3');

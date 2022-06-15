@@ -11,7 +11,7 @@ const morgan = require('./config/morgan');
 const obj = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
-const firebaseAuth = require('./middlewares/firebase-auth');
+const { decodeToken } = require('./middlewares/firebase-auth');
 
 const routes = obj.router;
 const app = express();
@@ -42,7 +42,7 @@ app.use(cors());
 app.options('*', cors());
 
 // authentication
-app.use(firebaseAuth);
+app.use(decodeToken);
 
 // v1 api routes
 app.use('/v1', routes);
