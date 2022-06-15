@@ -1,10 +1,12 @@
 const { db } = require('../dbconfig');
 
-const userlinkss = async (userid, size) => {
+const userlinkss = async (userid, size, orderby) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1 LIMIT ${size}`;
+        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1 ORDER BY ${orderby} LIMIT ${size} OFFSET ${
+          size - 10
+        }`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -24,7 +26,7 @@ const useracceptedlinkss = async (userid, acceptsize) => {
     (async () => {
       try {
         // const query = `select * from website_data as wd inner join  (select WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd,registration_link, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 LIMIT ${acceptsize}
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd,registration_link, Link_Status,Work_Required,status from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 LIMIT ${acceptsize}
         `;
         db.query(query, (err, res) => {
           if (err) {
@@ -44,7 +46,9 @@ const linkgiverlinkss = async (userid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where link_giver_id!='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required,status,order_id,link_added_on,target_link,source_link from linktable as lt inner join (select * from user_link_table where link_giver_id='${userid}' and Archive=1 ) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
+        // and status!='Link Created'
+        // console.log(query);
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -198,12 +202,12 @@ const insertioncontents = async (LinkgiverID, Linkid, UserId, input1, input2) =>
   });
 };
 
-const sendblogcontents = async (Linkid, UserId, input1, input2) => {
+const sendblogcontents = async (Linkid, UserId, input1, input2, linkgiverid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
         const query = `UPDATE user_link_table SET user_link_table.link_giver_id=?, user_link_table.doc_url= ?, user_link_table.target_link= ? WHERE  Link_id=? and User_ID=?`;
-        const queryparams = [UserId, input1, input2, Linkid, UserId];
+        const queryparams = [linkgiverid, input1, input2, Linkid, UserId];
         db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
@@ -470,14 +474,7 @@ const getcountstatuss = async (UserId) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `SELECT
-    SUM(IF(status = 'In progress' , 1, 0)) AS Inprogress1,
-    SUM(IF(status = 'Link Accepted (by Link Taker)', 1, 0)) AS Inprogress2,
-    SUM(IF(status = 'Re-work', 1, 0)) AS Rework,
-    SUM(IF(status = 'Link Created', 1, 0)) AS LinkCreated,
-    SUM(IF(status = 'Re-Submitted after Re-work - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted1,
-	  SUM(IF(status = 'Submitted - Waiting for Approval (from Link Giver)', 1, 0)) AS Submitted2
-    FROM user_link_table where User_ID='${UserId}'`;
+        const query = `select status,count(*) as total from (select * from linkmonitor where OrderId in (select order_id from user_link_table where User_ID='${UserId}') group by OrderId order by checked_on desc) as test group by status;`;
         //  console.log(query);
         db.query(query, (err, res) => {
           if (err) {

@@ -2,7 +2,7 @@ const express = require('express');
 // const validate = require('../../middlewares/validate');
 const userlinkcontroller = require('../../controllers/userlink.controller');
 // const userlinkValidation = require('../../validations/userlink.validation');
-const getemail = require('../../middlewares/firebase-auth');
+const getEmail = require('../../middlewares/firebase-auth');
 
 const router = express.Router();
 const s3plugin = require('../../models/plugins/s3');
@@ -88,12 +88,12 @@ router.post('/getcountstatus', userlinkcontroller.getcountstatus);
 
 router.post('/email', async function (req, res) {
   const { email } = req.body;
-  getemail(email)
-    .then((detail) => {
-      res.send({ userdetail: detail });
+  getEmail(email)
+    .then((d) => {
+      res.send({ details: d });
     })
-    .catch((err) => {
-      res.send(err);
+    .catch((e) => {
+      res.send({ error: e });
     });
 });
 
@@ -106,6 +106,7 @@ router.post('/iconurl', function (req, res) {
     })
     .catch((err) => {
       res.send(err);
+      //   console.log(err);
     });
 });
 
