@@ -26,8 +26,8 @@ const useracceptedlinkss = async (userid, acceptsize) => {
     (async () => {
       try {
         // const query = `select * from website_data as wd inner join  (select WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd,registration_link, Link_Status,Work_Required,status from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1 LIMIT ${acceptsize}
-        `;
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id ,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd,registration_link, Link_Status,Work_Required,order_id,status from linktable as lt inner join (select * from user_link_table where User_ID='${userid}' and Archive=1) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1  ORDER By order_id desc LIMIT ${acceptsize}`;
+        // console.log(query);
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -162,12 +162,52 @@ const feedbackupdates = async (Linkid, UserId, input1, input2) => {
   });
 };
 
-const exchangeinfos = async (Linkid, UserId, input1, input2) => {
+const exchangeinfos = async (Linkid, UserId, input1, input2, linkgiverid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `UPDATE user_link_table SET user_link_table.exchange_url= ?, user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=?`;
-        const queryparams = [input1, input2, Linkid, UserId];
+        const query = `UPDATE user_link_table SET SET user_link_table.link_giver_id=?, user_link_table.exchange_url= ?, user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=?`;
+        const queryparams = [linkgiverid, input1, input2, Linkid, UserId];
+        db.query(query, queryparams, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const acceptrequests = async (Linkid, UserId, input1, linkgiverid) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Approved', user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=? and  and PrimaryID>0; INSERT INTO user_link_table (Link_id,User_ID,link_giver_id,Archive,status) VALUES(${Linkid},${linkgiverid},${UserId},1,'Link Exchange Approved')`;
+        const queryparams = [input1, Linkid, UserId, UserId];
+        db.query(query, queryparams, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const rejectrequest = async (Linkid, UserId, input1) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Rejected', user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=? and  and PrimaryID>0`;
+        const queryparams = [input1, Linkid, UserId];
         db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
@@ -208,6 +248,26 @@ const sendblogcontents = async (Linkid, UserId, input1, input2, linkgiverid) => 
       try {
         const query = `UPDATE user_link_table SET user_link_table.link_giver_id=?, user_link_table.doc_url= ?, user_link_table.target_link= ? WHERE  Link_id=? and User_ID=?`;
         const queryparams = [linkgiverid, input1, input2, Linkid, UserId];
+        db.query(query, queryparams, (err, res) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } catch (err) {
+        reject(err);
+      }
+    })();
+  });
+};
+
+const sendemails = async (Linkid, UserId, input1) => {
+  return new Promise((resolve, reject) => {
+    (async () => {
+      try {
+        const query = `UPDATE user_link_table SET  user_link_table.email_info= ? WHERE  Link_id=? and User_ID=?`;
+        const queryparams = [input1, Linkid, UserId];
         db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
@@ -264,7 +324,7 @@ const orderidss = async (UserId) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `select order_id from user_link_table  where User_ID='${UserId}' and order_id IS NOT NULL`;
+        const query = `select user_link_table.order_id,user_link_table.link_added_on, website_data.Name from user_link_table   inner join website_data on website_data.WebsiteID=user_link_table.Link_id where user_link_table.User_ID='${UserId}' and  user_link_table.order_id IS NOT NULL`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -385,12 +445,14 @@ const insertlinks = async (linkid, UserId, Archive) => {
   // const today = new Date();
   // const dateString = today.toISOString();
   const date = new Date(); // some mock date
+  const d = new Date(date);
+  const addedon = d.toDateString();
   const milliseconds = date.getTime();
 
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `INSERT INTO user_link_table(Link_id,User_ID,Archive,order_id) VALUES (${linkid},'${UserId}',${Archive},'${milliseconds}')`;
+        const query = `INSERT INTO user_link_table(Link_id,User_ID,Archive,order_id,link_added_on) VALUES (${linkid},'${UserId}',${Archive},'${milliseconds}','${addedon}')`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);
@@ -500,8 +562,11 @@ module.exports = {
   getstatusupdates,
   feedbackupdates,
   exchangeinfos,
+  acceptrequests,
+  rejectrequest,
   insertioncontents,
   sendblogcontents,
+  sendemails,
   publishlinks,
   requestreworks,
   rejects,

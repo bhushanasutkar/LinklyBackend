@@ -37,11 +37,20 @@ router.put('/update_feedback', userlinkcontroller.feedbackupdate);
 // for updating the exchage content of saved link
 router.put('/exchange_request', userlinkcontroller.exchangeinfo);
 
+// for updating the exchage content of saved link
+router.post('/acceptrequest', userlinkcontroller.acceptrequest);
+
+// for updating the exchage content of saved link
+router.post('/rejectrequest', userlinkcontroller.rejectrequest);
+
 // for updating the link_insertion content of saved link
 router.put('/link_insertion', userlinkcontroller.insertioncontent);
 
 // for updating the guest blog content of saved link
 router.put('/send_blog', userlinkcontroller.sendblogcontent);
+
+// for sending email  saved link
+router.put('/sendemail', userlinkcontroller.sendemail);
 
 // for link publish popup
 router.post('/publishlink', userlinkcontroller.publishlink);

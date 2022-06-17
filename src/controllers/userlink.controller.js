@@ -75,8 +75,35 @@ const feedbackupdate = catchAsync(async (req, res) => {
 });
 
 const exchangeinfo = catchAsync(async (req, res) => {
-  const { Linkid, UserId, input1, input2 } = req.body;
-  const response = await userlinkservices.exchangeinfos(Linkid, UserId, input1, input2);
+  const { Linkid, UserId, input1, input2, linkgiverid } = req.body;
+  const response = await userlinkservices.exchangeinfos(Linkid, UserId, input1, input2, linkgiverid);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const sendemail = catchAsync(async (req, res) => {
+  const { Linkid, UserId, input1 } = req.body;
+  const response = await userlinkservices.sendemails(Linkid, UserId, input1);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const acceptrequest = catchAsync(async (req, res) => {
+  const { Linkid, UserId, input1, linkgiverid } = req.body;
+  const response = await userlinkservices.acceptrequests(Linkid, UserId, input1, linkgiverid);
+  res.status(httpStatus.OK);
+  return res.send({
+    response,
+  });
+});
+
+const rejectrequest = catchAsync(async (req, res) => {
+  const { Linkid, UserId, input1 } = req.body;
+  const response = await userlinkservices.rejectrequests(Linkid, UserId, input1);
   res.status(httpStatus.OK);
   return res.send({
     response,
@@ -226,8 +253,11 @@ module.exports = {
   savelink,
   statusupdate,
   getstatusupdate,
+  sendemail,
   feedbackupdate,
   exchangeinfo,
+  acceptrequest,
+  rejectrequest,
   insertioncontent,
   sendblogcontent,
   publishlink,
