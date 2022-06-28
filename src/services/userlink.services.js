@@ -1,10 +1,10 @@
 const { db } = require('../dbconfig');
 
-const userlinkss = async (userid, size, orderby) => {
+const userlinkss = async (userid, size) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1 ORDER BY ${orderby} LIMIT ${size} OFFSET ${
+        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1  LIMIT ${size} OFFSET ${
           size - 10
         }`;
         db.query(query, (err, res) => {
@@ -46,7 +46,7 @@ const linkgiverlinkss = async (userid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required,status,order_id,link_added_on,target_link,source_link from linktable as lt inner join (select * from user_link_table where link_giver_id='${userid}' and Archive=1 ) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
+        const query = `select * from website_data as wd inner join  (select lt.Link_Id,WebsiteId, Link_Type,contact_method,Cost_usd,Link_category,Rel_Attribute,Google_Indexed,Content_Guidelines,Self_Publish,SPM_Instantapproval,SPM_Probability,Price_gb_usd,Price_gbcbd_usd,linkly_credits,content_type,next_steps, Price_LinkInsertion_usd,Price_LinkInsertioncbd_usd, Link_Status,Work_Required,status,order_id,link_giver_id,link_added_on,target_link,source_link from linktable as lt inner join (select * from user_link_table where link_giver_id='${userid}' and Archive=1 ) as ult on lt.Link_Id=ult.Link_id ) as md on wd.WebsiteID=md.WebsiteId  and wd.Link_level=1`;
         // and status!='Link Created'
         // console.log(query);
         db.query(query, (err, res) => {
@@ -166,8 +166,10 @@ const exchangeinfos = async (Linkid, UserId, input1, input2, linkgiverid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `UPDATE user_link_table SET SET user_link_table.link_giver_id=?, user_link_table.exchange_url= ?, user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=?`;
+        const query = `UPDATE user_link_table SET  user_link_table.link_giver_id=?, user_link_table.exchange_url= ?, user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=?`;
         const queryparams = [linkgiverid, input1, input2, Linkid, UserId];
+        // console.log(query);
+        // console.log(linkgiverid,input1,input2)
         db.query(query, queryparams, (err, res) => {
           if (err) {
             reject(err);
@@ -186,9 +188,9 @@ const acceptrequests = async (Linkid, UserId, input1, linkgiverid) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Approved', user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=? and  and PrimaryID>0; INSERT INTO user_link_table (Link_id,User_ID,link_giver_id,Archive,status) VALUES(${Linkid},${linkgiverid},${UserId},1,'Link Exchange Approved')`;
-        const queryparams = [input1, Linkid, UserId, UserId];
-        db.query(query, queryparams, (err, res) => {
+        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Approved', user_link_table.exchange_topics='${input1}' WHERE Link_id=${Linkid} and User_ID='${UserId}' and  PrimaryID>0; INSERT INTO user_link_table (Link_id,User_ID,link_giver_id,Archive,status) VALUES(${Linkid},'${linkgiverid}','${UserId}',1,'Link Exchange Approved')`;
+        // const queryparams = [input1, Linkid, UserId, UserId];
+        db.query(query, (err, res) => {
           if (err) {
             reject(err);
           } else {
@@ -202,13 +204,12 @@ const acceptrequests = async (Linkid, UserId, input1, linkgiverid) => {
   });
 };
 
-const rejectrequest = async (Linkid, UserId, input1) => {
+const rejectrequests = async (Linkid, UserId, input1) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Rejected', user_link_table.exchange_topics= ? WHERE Link_id=? and User_ID=? and  and PrimaryID>0`;
-        const queryparams = [input1, Linkid, UserId];
-        db.query(query, queryparams, (err, res) => {
+        const query = `UPDATE user_link_table SET  user_link_table.status='Link Exchange Rejected', user_link_table.exchange_topics='${input1}' WHERE Link_id=${Linkid} and User_ID='${UserId}' and  PrimaryID>0`;
+        db.query(query, (err, res) => {
           if (err) {
             reject(err);
           } else {
@@ -563,7 +564,7 @@ module.exports = {
   feedbackupdates,
   exchangeinfos,
   acceptrequests,
-  rejectrequest,
+  rejectrequests,
   insertioncontents,
   sendblogcontents,
   sendemails,

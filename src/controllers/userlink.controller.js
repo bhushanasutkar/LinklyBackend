@@ -4,8 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const { userlinkservices } = require('../services');
 
 const userlinks = catchAsync(async (req, res) => {
-  const { userid, size, orderby } = req.body;
-  const Links = await userlinkservices.userlinkss(userid, size, orderby);
+  const { userid, size } = req.body;
+  const Links = await userlinkservices.userlinkss(userid, size);
   res.status(httpStatus.OK);
   return res.send({ Links });
 });
