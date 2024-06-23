@@ -22,7 +22,7 @@ function unexpectedErrorHandler(error) {
   exitHandler();
 }
 
-process.on('uncaughtException', unexpectedErrorHandler);
+process.on('uncaught-Exception', unexpectedErrorHandler);
 process.on('unhandledRejection', unexpectedErrorHandler);
 
 process.on('SIGTERM', () => {
