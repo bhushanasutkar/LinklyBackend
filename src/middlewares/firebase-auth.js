@@ -22,6 +22,7 @@ const decodeToken = async (req, res, next) => {
     headers: { authorization },
   } = req;
   const token = authorization && authorization.startsWith('Bearer') && authorization.split(' ')[1];
+  // " authorization && authorization.startsWith" this type of syntax is used when we say if authorization present then only perform split operation otherwise it is undefined
   try {
     await admin.auth().verifyIdToken(token);
     return next();

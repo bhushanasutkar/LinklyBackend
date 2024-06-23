@@ -25,9 +25,5 @@ const db = mysql.createConnection({
   multipleStatements: true,
 });
 
-// db.connect(function (err) {
-//   if (err) throw err;
-//   //   console.log(db);
-//   console.log('Connected!');
-// });
+
 exports.db = db;

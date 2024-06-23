@@ -115,9 +115,10 @@ router.post('/iconurl', function (req, res) {
     })
     .catch((err) => {
       res.send(err);
-      //   console.log(err);
+      // console.log(err);
     });
 });
+// https://linkly-bucket.s3.ap-south-1.amazonaws.com/Microsoft
 
 // router.put('/linkly/icon/database', function (req, res) {
 //   const { imagename } = req.body;

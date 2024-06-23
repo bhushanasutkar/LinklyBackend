@@ -1,12 +1,12 @@
 const { db } = require('../dbconfig');
-
-const userlinkss = async (userid, size) => {
+// const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1  LIMIT ${size} OFFSET ${
+//   size - 10
+// }`;
+const userlinkss = async (userid, size, sortby) => {
   return new Promise((resolve, reject) => {
     (async () => {
       try {
-        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1  LIMIT ${size} OFFSET ${
-          size - 10
-        }`;
+        const query = ` select * from website_data as wd inner join (SELECT * FROM linktable where Link_Id not in (select Link_id from user_link_table where User_ID='${userid}')) as lt on lt.WebsiteId=wd.WebsiteID and wd.Link_level=1  order by ${sortby}`;
         db.query(query, (err, res) => {
           if (err) {
             reject(err);

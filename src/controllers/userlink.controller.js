@@ -4,8 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const { userlinkservices } = require('../services');
 
 const userlinks = catchAsync(async (req, res) => {
-  const { userid, size } = req.body;
-  const Links = await userlinkservices.userlinkss(userid, size);
+  const { userid, size, sortby } = req.body;
+  const Links = await userlinkservices.userlinkss(userid, size, sortby);
   res.status(httpStatus.OK);
   return res.send({ Links });
 });
@@ -203,6 +203,7 @@ const getslandtl = catchAsync(async (req, res) => {
 const insertlink = catchAsync(async (req, res) => {
   const { linkid, UserId, Archive } = req.body;
   const response = await userlinkservices.insertlinks(linkid, UserId, Archive);
+  // console.log(response);
   res.status(httpStatus.OK);
   return res.send({
     response,
